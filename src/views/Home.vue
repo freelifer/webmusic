@@ -1,77 +1,85 @@
 <template>
-<el-container>
-  <el-header height=“48px”>
-    <div class="toolbar">
-        <div class="back"><span><i class="el-icon-arrow-left"></i>返回</span></div>
-        <div class="title"><span>标题</span></div>
-    </div>
-  </el-header>
-  <el-main style="padding: 0px;">
-    <div class="background">
-      <img width="100%" height="100%" src="../assets/bg.jpg">
-    </div>
-    <!-- music list -->
-    <div id="divscroller">
-      <ul class="scroll-box">
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-        <li>
-          <img id="img-icon" class="" width="60px" height="60px" src="../assets/bg.jpg"/>
-        </li>
-      </ul>
-    </div>
+  <el-container>
+    <el-header height="“48px”">
+      <div class="toolbar">
+        <div class="back">
+          <span>
+            <i class="el-icon-arrow-left"></i>返回
+          </span>
+        </div>
+        <div class="title">
+          <span>标题</span>
+        </div>
+      </div>
+    </el-header>
+    <el-main style="padding: 0px;">
+      <div class="background">
+        <img width="100%" height="100%" src="../assets/bg.jpg">
+      </div>
+      <MusicImage
+        class="music-image"
+        ref="musicImage"
+        strokeWidth="6"
+        imageWidth="160"
+        musicTotal="15"
+        imageSrc="/img/bg.071706b6.jpg"
+        @musicClick="handlerMusicClick"
+      ></MusicImage>
 
-<el-progress type="circle" :percentage="80" color="#8e71c7">
-
-      <slot>
-    <img id="img-icon" width="200px" height="200px" src="../assets/bg.jpg">
-    </slot>
-</el-progress>
-
-<!-- // autoplay preload loop controls -->
-    <audio ref="audio"  src="http://117.135.168.12/amobile.music.tc.qq.com/C400001aZHDQ4Kj8sC.m4a?guid=1385141139&vkey=CC6F5F145290C3C7617089131D4314E4789CF99A67EA7344A421BF3A87AFFB75B61051B1A48D15BBC568E09F94213263FFD56DAD3F00A2A2&uin=0&fromtag=66"></audio>
-  </el-main>
-</el-container>
+      <!-- <img id="img-icon" :class=" isRotate ? 'xx rotate' : 'xx rotate pause-rotate' " width="160px" height="160px" src="../assets/bg.jpg"> -->
+      <!-- // autoplay preload loop controls -->
+      <audio
+        ref="audio"
+        preload="load"
+        controls
+        src="http://183.192.163.157/amobile.music.tc.qq.com/C400001gT93A2w8mcs.m4a?guid=1385141139&vkey=0DCDC9692555D3389DE57A814A01AFEAC3FF5776DBC3B97572500FCB2F7E0738620F6F577447EDB748D54F548285C25BB4A3F7D9A15DD690&uin=0&fromtag=66"
+      ></audio>
+      
+      <el-button ref="btn" type="primary" @click="doTheThing">主要按钮</el-button>
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import MusicImage from "@/components/MusicImage.vue"; // @ is an alias to /src
 
 @Component({
   components: {
-    HelloWorld
+    HelloWorld,
+    MusicImage
   }
 })
 export default class Home extends Vue {
+  private isRotate: boolean = false;
   $refs!: {
+    musicImage: MusicImage;
     audio: HTMLAudioElement;
+    btn: HTMLButtonElement;
   };
   mounted() {
+    var that = this;
     console.log("mounted");
     // this.$refs.audio.play()
+    var t = setTimeout(function() {
+      console.log("执行了", that.$refs.btn);
+    }, 3000);
+  }
+  handlerMusicClick(isRunning: boolean) {
+    console.log("handlerMusicClick", isRunning);
+    if (isRunning) {
+      this.$refs.audio.play();
+    } else {
+      this.$refs.audio.pause();
+    }
+    // this.$refs.audio.play();
+  }
+  doTheThing() {
+    console.log("主要按钮");
+    // this.$refs.audio.play()
+    // this.isRotate = !this.isRotate;
+    this.$refs.musicImage.toggle();
   }
 }
 </script>
@@ -79,19 +87,15 @@ export default class Home extends Vue {
 body {
   margin: 0px;
 }
-.el-header, .el-footer {
+.el-header,
+.el-footer {
   color: #333;
   text-align: center;
   line-height: 48px;
 }
 
-.music-progress {
-  width: 200px;
-  height: 200px;
-}
-
-.music-main {
-  padding: 0px;
+.music-image {
+  margin: 0 auto;
 }
 
 .toolbar {
@@ -101,15 +105,14 @@ body {
 
 .back {
 }
-.title {align-self: center;
+.title {
+  align-self: center;
 }
 .home {
   width: 100%;
   height: 100%;
 }
-#img-icon {
-  border-radius: 50%;
-}
+
 .background {
   position: absolute;
   left: 0;
